@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* eslint-disable @typescript-eslint/ban-types */
 /* eslint-disable @typescript-eslint/no-empty-function */
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt'
@@ -35,6 +35,8 @@ export class UtilisateursService {
   }
 
   afficherUtilisateur(id: number) {
+    console.log(id);
+    
     return this.utilisateurRepository.findOne(id);
   }
 
@@ -53,5 +55,9 @@ export class UtilisateursService {
       salt,
       motPasseHashe
     }
+  }
+
+  async rechercherPar(email:string){    
+    return  await this.utilisateurRepository.findOne({email})
   }
 }
