@@ -1,13 +1,23 @@
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from "@nestjs/typeorm";
 
-export const typeOrmConfig: TypeOrmModuleOptions =
-{
-    type: 'mysql',
-    host: 'localhost',
-    port: 3306,
-    username: 'root',
-    password: '',
-    database: 'linkedin',
-    autoLoadEntities: true,
-    synchronize: true,
+@Injectable()
+export class TypeOrmConfigService implements TypeOrmOptionsFactory {
+    constructor(private readonly configService: ConfigService) { }
+        
+    createTypeOrmOptions(): TypeOrmModuleOptions {
+        return {
+            type: "mysql",
+            host: this.configService.get('DB_HOST'),
+            port: this.configService.get('DB_PORT'),
+            username: this.configService.get('DB_USER'),
+            password: this.configService.get('DB_PASSWORD'),
+            database: this.configService.get('DB_NAME'),
+            autoLoadEntities: this.configService.get('DB_AUTOLOAD'),
+            synchronize: this.configService.get('DB_SYNC'),
+        }
+    }
+
 }

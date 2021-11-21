@@ -1,8 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete, UseGuards } from '@nestjs/common';
 import { UtilisateursService } from './utilisateurs.service';
 import { CreateUtilisateurDto } from './dto/create-utilisateur.dto';
 import { UpdateUtilisateurDto } from './dto/update-utilisateur.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { Roles } from 'src/auth/decorateurs/roles.decorator';
+import { RoleUtilisateur } from 'src/utils/role-enum';
+import { RolesGuard } from './../auth/guards/roles.guard';
 
 @Controller('utilisateurs')
 export class UtilisateursController {
@@ -12,8 +16,10 @@ export class UtilisateursController {
   creer(@Body() utilisateurData: CreateUtilisateurDto) {
     return this.utilisateursService.creerUtilisateur(utilisateurData);
   }
-
-  @Get()
+  
+  @Roles(RoleUtilisateur.ADMIN, RoleUtilisateur.PREMIUM)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get()  
   liser() {
     return this.utilisateursService.listerUtilisateur();
   }

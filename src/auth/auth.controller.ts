@@ -17,20 +17,5 @@ export class AuthController {
   @Post('connexion')
   connexion(@Body() cnxData: UpdateAuthDto) {
     return this.authService.connexion(cnxData);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Put(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
-  }
+  } 
 }

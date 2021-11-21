@@ -4,37 +4,33 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { UpdateAuthDto } from './dto/connexion-auth.dto';
 import { UtilisateursService } from './../utilisateurs/utilisateurs.service';
 import { CreateUtilisateurDto } from 'src/utilisateurs/dto/create-utilisateur.dto';
+import { JwtService } from '@nestjs/jwt';
+import { PayloadDto } from './dto/payload.dto';
 
 
 
 @Injectable()
 export class AuthService {
   constructor(
-       private readonly utilisateurService : UtilisateursService
-    ){}
+    private readonly jwtService: JwtService,
+    private readonly utilisateurService: UtilisateursService
+  ) { }
 
   inscription(AuthData: CreateUtilisateurDto) {
     return this.utilisateurService.creerUtilisateur(AuthData);
   }
 
-  async connexion(cnxData: UpdateAuthDto) {      
+  async connexion(cnxData: UpdateAuthDto):Promise<{access_token:string}> {
     const existe = await this.utilisateurService.rechercherPar(cnxData.email)
     if (!existe) {
       throw new NotFoundException('Utilisateur non trouvé')
     }
+    const payload:PayloadDto={
+      id:existe.id,
+      role:existe.role
+    }
+    const token = this.jwtService.sign(payload)
 
-    return existe
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
-  }
+    return {access_token:token}
+  } 
 }

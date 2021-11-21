@@ -18,6 +18,11 @@ export class UtilisateursService {
   ) { }
 
   async creerUtilisateur(utilisateurData: CreateUtilisateurDto) {
+    const existe = await this.rechercherPar(utilisateurData.email)
+    if (existe) {
+      throw new ConflictException(`L'email ${utilisateurData.email} est déjà utlisé`)
+    }
+
     const hashage = await this.hashMotDePasse(utilisateurData.motPasse)
 
     const utilisateur = this.utilisateurRepository.create(utilisateurData);
@@ -30,13 +35,11 @@ export class UtilisateursService {
     return this.utilisateurRepository.save(utilisateur);
   }
 
-  listerUtilisateur() {
+  listerUtilisateur(): Promise<UtilisateurEntity[]> {
     return this.utilisateurRepository.find();
   }
 
-  afficherUtilisateur(id: number) {
-    console.log(id);
-    
+  afficherUtilisateur(id: number): Promise<UtilisateurEntity> {
     return this.utilisateurRepository.findOne(id);
   }
 
@@ -57,7 +60,7 @@ export class UtilisateursService {
     }
   }
 
-  async rechercherPar(email:string){    
-    return  await this.utilisateurRepository.findOne({email})
+  async rechercherPar(email: string): Promise<UtilisateurEntity> {
+    return await this.utilisateurRepository.findOne({ email })
   }
 }

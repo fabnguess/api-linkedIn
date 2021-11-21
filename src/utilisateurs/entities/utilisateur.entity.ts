@@ -1,9 +1,10 @@
+import { ArticleEntity } from "src/article/entities/article.entity";
 import { RoleUtilisateur } from "src/utils/role-enum"
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 import { Horodatage } from './../../utils/horodatage';
 
 @Entity('utilisateurs')
-export class UtilisateurEntity extends Horodatage{
+export class UtilisateurEntity extends Horodatage {
     @PrimaryGeneratedColumn()
     id: number
 
@@ -28,4 +29,7 @@ export class UtilisateurEntity extends Horodatage{
         default: RoleUtilisateur.USER
     })
     role: string
+
+    @OneToMany(type => ArticleEntity, article => article.auteur)
+    articles: ArticleEntity[]
 }
